@@ -194,3 +194,32 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+
+
+# Customer
+# Test
+#.gitignore
+#忽略后缀名为.o和.a的文件
+#*.[oa]
+#显示指定忽略名称为main的文件
+#Test/*
+# Ignore 文件
+#Ignore*
+
+# zip file
+*.rar
+*.zip
+
+# reference folder
+Reference/Wuqi.Webdiyer.AspNetPager/*
+Reference/AspNetPager745DLL/*
+Reference/AspNetPager745Demo/*
+Solution/Reference/Wuqi.Webdiyer.AspNetPager/*
+Solution/Reference/AspNetPager745DLL/*
+Solution/Reference/AspNetPager745Demo/*
+
+# vs的user文件
+*.suo
+
+# svn
+.svn/*
