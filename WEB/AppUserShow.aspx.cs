@@ -53,8 +53,10 @@ public partial class AppUserShow : System.Web.UI.Page
         if (!PubClass.IsNull(this.txtID.Text))
         {
 
-            string sql = string.Format("update hbh_user set account='{0}',passwd='{1}',name='{2}',sex='{3}' ,birthday ='{4}',region ='{5}',address ='{6}',tel ='{7}',pic ='{8}',ModifiedBy='{9}',ModifiedOn='{10}',SysVersion=sysVersion+1,judge_user_Account ='{11}' where ID='{12}'"
-                    , txtAccount.Text.Trim(), this.txtPassword.Text.Trim(), this.txtName.Text.Trim(), txtSex.Text.Trim(), txtBirthday.Text.Trim(), txtRegion.Text.Trim(),
+            string sql = string.Format("update hbh_user set account='{0}',passwd='{1}',name='{2}',sex='{3}' ,birthday ={4},region ='{5}',address ='{6}',tel ='{7}',pic ='{8}',ModifiedBy='{9}',ModifiedOn='{10}',SysVersion=sysVersion+1,judge_user_Account ='{11}' where ID='{12}'"
+                    , txtAccount.Text.Trim(), this.txtPassword.Text.Trim(), this.txtName.Text.Trim(), txtSex.Text.Trim()
+                    , GetBirthdayFromString(txtBirthday.Text.Trim())
+                    , txtRegion.Text.Trim(),
                     txtAddress.Text.Trim(), txtTel.Text.Trim(), txtPic.ImageUrl.Trim(), loginUser.ID.ToString() + "_" + loginUser.Code + "_" + loginUser.Name,DateTime.Now, txtJudgeUser.Text.Trim(), txtID.Text.Trim()
                     );
 
@@ -78,8 +80,10 @@ public partial class AppUserShow : System.Web.UI.Page
         else
         {
             //这里是否加上judge_user_account
-            string sql = string.Format("insert into hbh_User (account,passwd,name,sex,birthday,region,address,tel,pic,CreatedOn,createdby,judge_user_account,sysversion) values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}');  select @@IDENTITY ; ",
-         txtAccount.Text.Trim(), txtPassword.Text.Trim(), txtName.Text.Trim(), txtSex.Text.Trim(), txtBirthday.Text.Trim(), txtRegion.Text.Trim(), txtAddress.Text.Trim(), txtTel.Text.Trim(), txtPic.ImageUrl.Trim(),DateTime.Now,loginUser.ID.ToString() + "_" + loginUser.Code + "_" + loginUser.Name,txtJudgeUser.Text.Trim(),0);
+            string sql = string.Format("insert into hbh_User (account,passwd,name,sex,birthday,region,address,tel,pic,CreatedOn,createdby,judge_user_account,sysversion) values('{0}','{1}','{2}','{3}',{4},'{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}');  select @@IDENTITY ; ",
+         txtAccount.Text.Trim(), txtPassword.Text.Trim(), txtName.Text.Trim(), txtSex.Text.Trim()
+         , GetBirthdayFromString(txtBirthday.Text.Trim())
+         , txtRegion.Text.Trim(), txtAddress.Text.Trim(), txtTel.Text.Trim(), txtPic.ImageUrl.Trim(),DateTime.Now,loginUser.ID.ToString() + "_" + loginUser.Code + "_" + loginUser.Name,txtJudgeUser.Text.Trim(),0);
 
             object result = sqlHelper.DbHelper.ExecuteScalar(CommandType.Text, sql);
 
@@ -115,7 +119,11 @@ public partial class AppUserShow : System.Web.UI.Page
                 txtPassword.Text = row["passwd"].ToString();
                 txtName.Text = row["name"].ToString();
                 txtSex.Text = row["sex"].ToString();
-                txtBirthday.Text = Convert.ToDateTime(row["birthday"].ToString()).ToString("yyyy-MM-dd");
+                string strBirth = row["birthday"].ToString();
+                if (!string.IsNullOrEmpty(strBirth))
+                {
+                    txtBirthday.Text = Convert.ToDateTime(strBirth).ToString("yyyy-MM-dd");
+                }
                 txtRegion.Text = row["region"].ToString();
                 txtAddress.Text = row["address"].ToString();
                 txtTel.Text = row["tel"].ToString();
@@ -256,8 +264,10 @@ public partial class AppUserShow : System.Web.UI.Page
                     && dtblDiscuss.Rows.Count > 0
                     )
                 {
-                    string sql = string.Format("update hbh_user set account='{0}',passwd='{1}',name='{2}',sex='{3}' ,birthday ='{4}',region ='{5}',address ='{6}',tel ='{7}',pic ='{8}',ModifiedBy='{9}',ModifiedOn='{10}',SysVersion=sysVersion+1,judge_user_Account ='{11}' where judge_user_Account='{10}'"
-                    , entity.Account, entity.Passwd, entity.Name, entity.Sex, entity.Birthday, entity.Region, entity.Address, entity.Tel, entity.Pic, loginUser.ID.ToString() + "_" + loginUser.Code + "_" + loginUser.Name, DateTime.Now, txtJudgeUser.Text.Trim(), txtJudgeUser.Text.Trim()
+                    string sql = string.Format("update hbh_user set account='{0}',passwd='{1}',name='{2}',sex='{3}' ,birthday ={4},region ='{5}',address ='{6}',tel ='{7}',pic ='{8}',ModifiedBy='{9}',ModifiedOn='{10}',SysVersion=sysVersion+1,judge_user_Account ='{11}' where judge_user_Account='{10}'"
+                    , entity.Account, entity.Passwd, entity.Name, entity.Sex
+                    , GetBirthdayFromString(entity.Birthday)
+                    , entity.Region, entity.Address, entity.Tel, entity.Pic, loginUser.ID.ToString() + "_" + loginUser.Code + "_" + loginUser.Name, DateTime.Now, txtJudgeUser.Text.Trim(), txtJudgeUser.Text.Trim()
                     );
                    
                     int row = sqlHelper.DbHelper.ExecuteNonQuery(CommandType.Text, sql);
@@ -280,8 +290,10 @@ public partial class AppUserShow : System.Web.UI.Page
                 else
                 {
                    
-                    string sql = string.Format("insert into hbh_User (account,passwd,name,sex,birthday,region,address,tel,pic,judge_user_account,CreatedOn,createdby,sysversion) values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}');  select @@IDENTITY ; ",
-                entity.Account, entity.Passwd, entity.Name, entity.Sex, entity.Birthday, entity.Region, entity.Address, entity.Tel, entity.Pic, txtJudgeUser.Text.Trim(),DateTime.Now, loginUser.ID.ToString() + "_" + loginUser.Code + "_" + loginUser.Name,0);
+                    string sql = string.Format("insert into hbh_User (account,passwd,name,sex,birthday,region,address,tel,pic,judge_user_account,CreatedOn,createdby,sysversion) values('{0}','{1}','{2}','{3}',{4},'{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}');  select @@IDENTITY ; ",
+                entity.Account, entity.Passwd, entity.Name, entity.Sex
+                , GetBirthdayFromString(entity.Birthday)
+                , entity.Region, entity.Address, entity.Tel, entity.Pic, txtJudgeUser.Text.Trim(), DateTime.Now, loginUser.ID.ToString() + "_" + loginUser.Code + "_" + loginUser.Name, 0);
 
                     object resultID = sqlHelper.DbHelper.ExecuteScalar(CommandType.Text, sql);
 
@@ -310,6 +322,16 @@ public partial class AppUserShow : System.Web.UI.Page
 
         }
        
+    }
+
+    private static string GetBirthdayFromString(string strBirthday)
+    {
+        if (string.IsNullOrEmpty(strBirthday))
+        {
+            return "null";
+        }
+
+        return string.Format("'{0}'", strBirthday);
     }
 
 }

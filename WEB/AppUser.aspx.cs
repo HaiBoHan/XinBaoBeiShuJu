@@ -99,7 +99,8 @@ public partial class AppUser : System.Web.UI.Page
 
         if (string.IsNullOrEmpty(strAccount))
         {
-            selectCommand = @"select id,account,passwd,name ,sex,birthday,region,address,tel,pic,judge_user_Account from hbh_user";
+            selectCommand = @"select id,account,passwd,name ,sex,case when birthday < '1950-01-01' then null else birthday end birthday
+,region,address,tel,pic,judge_user_Account from hbh_user";
            
             sqlHelper.DbHelper.Fill(dtblDiscuss, CommandType.Text, selectCommand, null);
 
@@ -108,7 +109,7 @@ public partial class AppUser : System.Web.UI.Page
         else
         {
             string where = "account = '" + strAccount + "'";
-            selectCommand = @"select id,account,passwd,name ,sex,birthday,region,address,tel,pic,judge_user_Account from hbh_user where {0};";
+            selectCommand = @"select id,account,passwd,name ,sex,case when birthday < '1950-01-01' then null else birthday end birthday,region,address,tel,pic,judge_user_Account from hbh_user where {0};";
             selectCommand = string.Format(selectCommand, where);
             sqlHelper.DbHelper.Fill(dtblDiscuss, CommandType.Text, selectCommand, null);
             return dtblDiscuss;
